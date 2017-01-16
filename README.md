@@ -18,17 +18,17 @@ An introduction to Shaders, GLSL and the graphics pipeline ITP unconference, spr
  
 ## Resources
 - [Online Shader Editor](http://editor.thebookofshaders.com/)
-- (GLSL quick reference)[https://www.khronos.org/files/opengl-quick-reference-card.pdf]
+- [GLSL quick reference](https://www.khronos.org/files/opengl-quick-reference-card.pdf)
 - The Book of Shaders
 - ShaderToy
 - LearnOpenGL
-- (OpenGL in Cinder)[https://libcinder.org/docs/guides/opengl/index.html]
-- (oF: Introducing shader)[http://openframeworks.cc/ofBook/chapters/shaders.html]
-- (Reza Ali's F3 App)
-- (Cacheflowe)[https://github.com/cacheflowe/creative-coding-class-notes/blob/master/creative-coding-overview.md]
-- (Ken Perlin's Syllabi)[http://mrl.nyu.edu/~perlin/#classes]
-- (WebGL fundamentals)[http://webglfundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html]
-- (GPGPU and WebGL)[http://www.vizitsolutions.com/portfolio/webgl/gpgpu/]
+- [OpenGL in Cinder](https://libcinder.org/docs/guides/opengl/index.html)
+- [oF: Introducing shader](http://openframeworks.cc/ofBook/chapters/shaders.html)
+- [Reza Ali's F3 App)
+- [Cacheflowe](https://github.com/cacheflowe/creative-coding-class-notes/blob/master/creative-coding-overview.md)
+- [Ken Perlin's Syllabi](http://mrl.nyu.edu/~perlin/#classes)
+- [WebGL fundamentals](http://webglfundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html)
+- [GPGPU and WebGL](http://www.vizitsolutions.com/portfolio/webgl/gpgpu/)
 
 
 ### Let's start off with some basic terminology...
@@ -46,18 +46,18 @@ GLSL:
 'GLSL' stands for OpenGL Shading Language and is a high-level shading language based on the syntax of the C programming language.  GLSL is the language we use to write shader code.
 
 ### ...and move on to The Graphics Rendering Pipeline
-Shaders run on the GPU, which has an entirely different architecture to the CPU.  GPUs are designed and built for parrallel computation ( The book of shaders has an excellent analogy (here)[http://thebookofshaders.com/01/] ).
+Shaders run on the GPU, which has an entirely different architecture to the CPU.  GPUs are designed and built for parrallel computation ( The book of shaders has an excellent analogy [here](http://thebookofshaders.com/01/) ).
 Data (vertices, attributes, textures etc.) is passed to the GPU where different shaders are responsible for different stages of the pipeline. Data and orders must follow a path and have to pass through some stages, and that cannot be altered. This path is commonly called The Graphics Rendering Pipeline. Think of it like a pipe where we insert some data into one end—vertices, textures, shaders—and they start to travel through some small machines that perform very precise and concrete operations on the data and produce the final output at the other end, ie. the final rendering.
 
 The diagram below shows a simplified view of the graphics pipeline:
 [image](http://romain.vergne.free.fr/teaching/IS/imgs03/pipeline-v4.png)
 
-In a nutshell, the rendering pipeline is responsible for rendering the final image onto your display.  An important role that the various shaders play is transforming coordinate systems. Why is this important? Well, because OpenGL expects every vertex that goes through the pipeline to be represented in normalized device coordinates, ie to have a value between -1.0 and 1.0. Shaders make use of transformation matrices to achieve this and convert a 3D objects local coordinates to XY coordinates for your display.  You can find an in-depth description of the processes (here)[https://learnopengl.com/#!Getting-started/Coordinate-Systems].
+In a nutshell, the rendering pipeline is responsible for rendering the final image onto your display.  An important role that the various shaders play is transforming coordinate systems. Why is this important? Well, because OpenGL expects every vertex that goes through the pipeline to be represented in normalized device coordinates, ie to have a value between -1.0 and 1.0. Shaders make use of transformation matrices to achieve this and convert a 3D objects local coordinates to XY coordinates for your display.  You can find an in-depth description of the processes [here](https://learnopengl.com/#!Getting-started/Coordinate-Systems).
 
 ### Shaders
 
 The following diagram shows the programmable pipeline in a bit more detail, and highlights the four types of shaders in bold.
-(image)[images/pipeline.png]
+[pipeline][images/pipeline.png]
 
 As you can see, four shader types are defined: Vertex Shader, Geometry Shader, Compute Shader, and Fragment Shader.  All shader code is written using GLSL.  We'll be focusing on the vertex shader, and fragment shader today as they're the most important in the pipeline because they expose the pure basic functionality of the GPU.  Note, if you do write your own shaders, it's mandatory that you have both a vertex and fragment shader.  The compute shader and geometry shader are both optional and are only used in special circumstances ( we won't be covering these as they're a more advanced topic ).  There's another type of shader called a Tessellation shader, but that's also beyond the scope of this intro.
 
