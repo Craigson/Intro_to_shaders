@@ -50,7 +50,7 @@ Shaders run on the GPU, which has an entirely different architecture to the CPU.
 Data (vertices, attributes, textures etc.) is passed to the GPU where different shaders are responsible for different stages of the pipeline. Data and orders must follow a path and have to pass through some stages, and that cannot be altered. This path is commonly called The Graphics Rendering Pipeline. Think of it like a pipe where we insert some data into one end—vertices, textures, shaders—and they start to travel through some small machines that perform very precise and concrete operations on the data and produce the final output at the other end, ie. the final rendering.
 
 The diagram below shows a simplified view of the graphics pipeline:
-[image](http://romain.vergne.free.fr/teaching/IS/imgs03/pipeline-v4.png)
+![image](http://romain.vergne.free.fr/teaching/IS/imgs03/pipeline-v4.png)
 
 In a nutshell, the rendering pipeline is responsible for rendering the final image onto your display.  An important role that the various shaders play is transforming coordinate systems. Why is this important? Well, because OpenGL expects every vertex that goes through the pipeline to be represented in normalized device coordinates, ie to have a value between -1.0 and 1.0. Shaders make use of transformation matrices to achieve this and convert a 3D objects local coordinates to XY coordinates for your display.  You can find an in-depth description of the processes [here](https://learnopengl.com/#!Getting-started/Coordinate-Systems).
 
