@@ -19,9 +19,9 @@ An introduction to Shaders, GLSL and the graphics pipeline ITP unconference, spr
 ## Resources
 - [Online Shader Editor](http://editor.thebookofshaders.com/)
 - [GLSL quick reference](https://www.khronos.org/files/opengl-quick-reference-card.pdf)
-- The Book of Shaders
-- ShaderToy
-- LearnOpenGL
+- [The Book of Shaders](http://thebookofshaders.com/)
+- [ShaderToy](https://www.shadertoy.com/)
+- [LearnOpenGL](https://learnopengl.com/)
 - [OpenGL in Cinder](https://libcinder.org/docs/guides/opengl/index.html)
 - [oF: Introducing shader](http://openframeworks.cc/ofBook/chapters/shaders.html)
 - [Reza Ali's F3 App)
