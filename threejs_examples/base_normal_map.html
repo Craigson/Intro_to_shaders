@@ -1,0 +1,268 @@
+<html>
+<head>
+	<title> Basic Shader Template </title>
+	<style>
+				body {
+				background-color: #000;
+				margin: 0px;
+				overflow: hidden;
+			}
+	</style>
+	<script src="js/three.js"></script>
+
+	<!-- create your vertex shader -->
+	<script type="x-shader/x-vertex" id="vertexShader">
+		
+		varying vec3 vNormal;
+		varying vec3 vPosition;
+		varying vec2 vUv;
+
+		void main(){
+
+			// 'normal' and 'position' are uniforms passed in by Three.js
+			vUv = uv;
+			vNormal = normal;
+			vPosition = position;
+
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+		}
+
+	</script>
+
+	<!-- create your fragment shader -->
+	<script type="x-shader/x-fragment" id="fragmentShader">
+	
+		uniform vec3 uLightPosition;
+		uniform sampler2D uNormalMap;
+
+		// the varyings are passed from the vertex shader to the frag shader
+		varying vec2 vUv;
+		varying vec3 vNormal;
+		varying vec3 vPosition;
+
+		// shader code goes here
+		void main(){
+
+			// ambient lighting
+			vec3 ambient = vec3(0.1,0.1,0.1);
+
+			// apply the normal map
+			vec3 normal = -vNormal;
+			normal = texture2D(uNormalMap, vUv).rgb;
+			normal = normalize(normal * 2.0 - 1.0);   
+
+			// vec4 texColor = texture2D(uTex, vUv);
+
+			// diffuse lighting
+			vec3 lightDirection = normalize(uLightPosition - vPosition);
+			float dist = length(-lightDirection);
+			float attenuation =  1. / (dist + dist*dist);
+			vec3 cameraVector = normalize(-vPosition);
+
+			// specular lighting
+			vec3 reflection = normalize ( reflect(lightDirection, normal));
+			vec3 diffuse = vec3 ( max(dot(normal, lightDirection), 0.0) );
+			const float shininess_factor = 16.;
+			vec3 specular = vec3 (pow (max ( dot( reflection, cameraVector), 0.0), shininess_factor) );
+
+
+			gl_FragColor = vec4(attenuation * ( specular + diffuse) + ambient, 1.);
+		}
+	
+	</script>
+
+
+</head>
+<style>
+body
+{
+	margin: 0;
+	overflow: hidden;
+}
+</style>
+<body>
+
+	<div id='container'></div>
+	<script>
+		var container, scene, camera, renderer, raycaster, objects = [];
+
+		var light;
+
+		// this will represent our shader program
+		var material;
+
+		// intialize the scene
+		init();
+
+		// animate the scene by recursively calling the animate() method
+		animate();
+
+		function init(){
+
+			//Setup------------------------------------------
+			container = document.getElementById( 'container' );
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 1000 );   
+
+			// set the camera's position
+			camera.position.z = 100;
+
+			// set the point that the camera will look at
+		    camera.target = new THREE.Vector3( 0, 0, 0 );
+		    
+		    // add the camera to the scene
+		    scene.add( camera );
+
+			renderer = new THREE.WebGLRenderer( { alpha: true} );
+			renderer.setSize( window.innerWidth, window.innerHeight);
+
+			// we can use a ray caster to check whether or not the mouse intersects any 3D objects
+			raycaster = new THREE.Raycaster();
+			
+			//Create and Add Objects To the Scene HERE-------------------
+
+			// debug view for the light source ( add a sphere to the scene)
+		    light = new THREE.Mesh( new THREE.SphereGeometry(2,16,16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+
+		    // add the light to the scene
+		    scene.add(light);
+
+			var geometry = new THREE.SphereGeometry(24,32,32);
+
+
+			var loader = new THREE.TextureLoader();
+
+			loader.load('images/normal_map.jpeg', function(texture){
+	
+				// create a shader material object by loading your shaders
+			    material = new THREE.ShaderMaterial( {
+			       
+			       // this is where we declare what uniform variables we will be sending to the shader
+			        
+			        uniforms: { 
+			            uNormalMap: { 
+			                type: "t", 
+			                value: texture
+			            },
+			            uLightPosition: { 
+			                type: "v3", 
+			                value: light.position
+				        }
+				    },
+			
+			        // load in the vertex and fragment shader by grabbing their element IDs
+			        vertexShader: document.getElementById( 'vertexShader' ).textContent,
+			        fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+			    } );
+
+    		    // bind the material ( shader ) to the geometry
+			    var sphere = new THREE.Mesh(geometry, material);
+
+			    scene.add(sphere);
+
+
+			});
+	
+
+
+
+			//Events------------------------------------------
+			document.addEventListener( 'click', onMouseClick, false );
+			document.addEventListener( 'mousedown', onMouseDown, false );
+			document.addEventListener( 'mouseup', onMouseUp, false );
+			document.addEventListener( 'mousemove', onMouseMove, false );
+			document.addEventListener( 'mouseout', onMouseOut, false );
+			document.addEventListener( 'keydown', onKeyDown, false );
+			document.addEventListener( 'keyup', onKeyUp, false );
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Final touches-----------------------------------
+			container.appendChild( renderer.domElement );
+			document.body.appendChild( container );
+		}
+
+		function animate(){
+			requestAnimationFrame( animate );
+			render();
+		}
+		function render(){
+			// update shader uniforms
+			/*
+			material.uniforms[ 'time' ].value = .00025 * ( Date.now() - start );
+			*/
+		
+			var time = Date.now() * 0.001;
+		
+			light.position.x = Math.sin( time * 0.7 ) * 30;
+			light.position.y = Math.cos( time * 0.5 ) * 40;
+			light.position.z = Math.cos( time * 0.3 ) * 30;
+		
+			//Render Scene---------------------------------------
+        	renderer.clear();
+			renderer.render( scene , camera );
+		}
+		
+		function onMouseClick( event ){
+			intersects = calculateIntersects( event );
+
+			if ( intersects.length > 0 ){
+				//If object is intersected by mouse pointer, do something
+			}
+		}
+
+		function onMouseDown( event ){
+
+		}
+
+		function onMouseUp( event ){
+
+		}
+
+		function onMouseMove( event ){
+			//event.clientX; mouse x position
+			//event.clientY; mouse y position
+		}
+
+		function onMouseOut( event ){
+
+		}
+
+		function onKeyDown( event ){
+
+		}
+
+		function onKeyUp( event ){
+			/*event.keyCode; key pressed
+			Javascript keycode table:
+			http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
+			*/
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+		function calculateIntersects( event ){
+			
+			//Determine objects intersected by raycaster
+			event.preventDefault();
+
+			var vector = new THREE.Vector3();
+			vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+			vector.unproject( camera );
+
+			raycaster.ray.set( camera.position, vector.sub( camera.position ).normalize() );
+
+			var intersects = raycaster.intersectObjects( objects );
+			
+			return intersects;
+		}
+	</script>
+</body>
+</html>
