@@ -10,7 +10,7 @@ An introduction to Shaders, GLSL and the graphics pipeline ITP unconference, spr
 - How shaders fit into frameworks like Processing, p5.js, Three.js, OpenFrameworks and Cinder.
 
 ## Inspiration
- - Don't be fooled by the website, this guy is a genius: [Inigo Quillez](http://iquilezles.org/)
+ - [Inigo Quillez](http://iquilezles.org/) - Don't be fooled by the website, this guy is a genius!
  - [Robert Hodgin](http://roberthodgin.com/)
  - [Reza Ali](http://www.syedrezaali.com/)
  - [Simon Geilfus](http://www.simongeilfus.com/)
@@ -24,7 +24,7 @@ An introduction to Shaders, GLSL and the graphics pipeline ITP unconference, spr
 - [LearnOpenGL](https://learnopengl.com/)
 - [OpenGL in Cinder](https://libcinder.org/docs/guides/opengl/index.html)
 - [oF: Introducing shader](http://openframeworks.cc/ofBook/chapters/shaders.html)
-- [Reza Ali's F3 App)[http://www.syedrezaali.com/#/f3-mac-app/]
+- [Reza Ali's F3 App](http://www.syedrezaali.com/#/f3-mac-app/)
 - [Cacheflowe](https://github.com/cacheflowe/creative-coding-class-notes/blob/master/creative-coding-overview.md)
 - [Ken Perlin's Syllabi](http://mrl.nyu.edu/~perlin/#classes)
 - [WebGL fundamentals](http://webglfundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html)
