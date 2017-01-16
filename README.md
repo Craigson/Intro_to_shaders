@@ -58,7 +58,7 @@ In a nutshell, the rendering pipeline is responsible for rendering the final ima
 ### Shaders
 
 The following diagram shows the programmable pipeline in a bit more detail, and highlights the four types of shaders in bold.
-![pipeline][images/pipeline.png]
+![pipeline](images/pipeline.png)
 
 As you can see, four shader types are defined: Vertex Shader, Geometry Shader, Compute Shader, and Fragment Shader.  All shader code is written using GLSL.  We'll be focusing on the vertex shader, and fragment shader today as they're the most important in the pipeline because they expose the pure basic functionality of the GPU.  Note, if you do write your own shaders, it's mandatory that you have both a vertex and fragment shader.  The compute shader and geometry shader are both optional and are only used in special circumstances ( we won't be covering these as they're a more advanced topic ).  There's another type of shader called a Tessellation shader, but that's also beyond the scope of this intro.
 
