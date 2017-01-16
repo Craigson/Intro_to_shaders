@@ -10,14 +10,14 @@ An introduction to Shaders, GLSL and the graphics pipeline ITP unconference, spr
 - How shaders fit into frameworks like Processing, p5.js, Three.js, OpenFrameworks and Cinder.
 
 ## Inspiration
- - Don't be fooled by the website, this guy is a genius: (Inigo Quillez)[http://iquilezles.org/]
- - (Robert Hodgin)[http://roberthodgin.com/]
- - (Reza Ali)[http://www.syedrezaali.com/]
- - (Simon Geilfus)[http://www.simongeilfus.com/]
- - (Jaume Sanchez)[https://www.clicktorelease.com/]
+ - Don't be fooled by the website, this guy is a genius: [Inigo Quillez](http://iquilezles.org/)
+ - [Robert Hodgin](http://roberthodgin.com/)
+ - [Reza Ali](http://www.syedrezaali.com/)
+ - [Simon Geilfus](http://www.simongeilfus.com/)
+ - [Jaume Sanchez](https://www.clicktorelease.com/)
  
 ## Resources
-- Online Shader Editor(http://editor.thebookofshaders.com/)
+- [Online Shader Editor](http://editor.thebookofshaders.com/)
 - (GLSL quick reference)[https://www.khronos.org/files/opengl-quick-reference-card.pdf]
 - The Book of Shaders
 - ShaderToy
