@@ -1,0 +1,290 @@
+<html>
+<head>
+	<title> Basic Shader Template </title>
+	<script src="js/three.js"></script>
+
+
+	<!-- create your vertex shader -->
+	<script type="x-shader/x-vertex" id="vertexShader">
+
+		varying vec2 vUv;
+		varying vec3 vNormal;
+
+		void main(){
+
+			vUv = uv; // the texCoord 'uv' is passed automatically by Three.js
+			vNormal = normal; // the normal is passed to the shader behind the scenes by Three.js
+
+			// transform the vertex position to screen space using the transformation matrices (which are automatically passed by Three.js)
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+		}
+
+	</script>
+
+	<!-- create your fragment shader -->
+	<script type="x-shader/x-fragment" id="fragmentShader">
+	
+		varying vec3 vNormal; // get the normal from the vertex shader
+		uniform sampler2D uTex; // the uniform texture
+		varying vec2 vUv; // get the texCoord from the vertex shader
+
+
+
+		void main(){
+			
+			// we extract the color from the texture using the texture2D() method, where the first argument is the sampler2D (ie the texture stored in memory) and the second is the texture coordinate
+			vec4 texColor = texture2D(uTex, vUv);
+
+			gl_FragColor = vec4(texColor.rgb,1.);
+			// gl_FragColor = texColor;
+		}
+	
+	</script>
+
+
+</head>
+
+<body>
+	<video id="monitor" autoplay width="160" height="120" style="visibility: hidden; float:left;"></video>
+	<canvas id="videoImage" width="160" height="120" style="visibility: hidden; float:left;"></canvas>
+
+		<!-- scripts for managing the webcam -->
+	<script>
+		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+		window.URL = window.URL || window.webkitURL;
+
+		var camvideo = document.getElementById('monitor');
+
+			if (!navigator.getUserMedia) 
+			{
+				document.getElementById('errorMessage').innerHTML = 
+					'Sorry. <code>navigator.getUserMedia()</code> is not available.';
+			} else {
+				navigator.getUserMedia({video: true}, gotStream, noStream);
+			}
+
+		function gotStream(stream) 
+		{
+			if (window.URL) 
+			{   camvideo.src = window.URL.createObjectURL(stream);   } 
+			else // Opera
+			{   camvideo.src = stream;   }
+
+			camvideo.onerror = function(e) 
+			{   stream.stop();   };
+
+			stream.onended = noStream;
+		}
+
+		function noStream(e) 
+		{
+			var msg = 'No camera available.';
+			if (e.code == 1) 
+			{   msg = 'User denied access to use camera.';   }
+			document.getElementById('errorMessage').textContent = msg;
+		}
+	</script>
+
+
+</body>
+<style>
+body
+{
+	margin: 0;
+	overflow: hidden;
+}
+</style>
+
+	<div id='container'></div>
+	<script>
+		var container, scene, camera, renderer, raycaster, objects = [];
+
+		// global variables for handling video data
+		var video, videoImage, videoImageContext, videoTexture;
+
+		// make our object global so we can manipulate it (ie rotate etc);
+		var donut;
+
+		// this will represent our shader program
+		var material;
+
+		// intialize the scene
+		init();
+
+		// animate the scene by recursively calling the animate() method
+		animate();
+
+		function init(){
+
+			//Setup------------------------------------------
+			container = document.getElementById( 'container' );
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 1000 );   
+
+			// set the camera's position
+			camera.position.z = 100;
+
+			// set the point that the camera will look at
+		    camera.target = new THREE.Vector3( 0, 0, 0 );
+		    
+		    // add the camera to the scene
+		    scene.add( camera );
+
+			renderer = new THREE.WebGLRenderer( { alpha: true} );
+			renderer.setSize( window.innerWidth, window.innerHeight);
+
+			// we can use a ray caster to check whether or not the mouse intersects any 3D objects
+			raycaster = new THREE.Raycaster();
+			
+			//Create and Add Objects To the Scene HERE-------------------
+
+			geometry = new THREE.TorusGeometry( 24, 8, 16, 100 );
+			
+			video = document.getElementById( 'monitor' );
+
+			// update the video data
+			videoImage = document.getElementById( 'videoImage' );
+			videoImageContext = videoImage.getContext( '2d' );
+			// background color if no video present
+			videoImageContext.fillStyle = '#000000';
+			videoImageContext.fillRect( 0, 0, videoImage.width, videoImage.height );
+
+			videoTexture = new THREE.Texture( videoImage );
+			videoTexture.minFilter = THREE.LinearFilter;
+			videoTexture.magFilter = THREE.LinearFilter;
+
+			var loader = new THREE.TextureLoader();
+
+			
+	
+				// create a shader material object by loading your shaders
+			    material = new THREE.ShaderMaterial( {
+			       
+			       // this is where we declare what uniform variables we will be sending to the shader
+			        
+			        uniforms: { 
+			            uTex: { 
+			                type: "t", 
+			                value: videoTexture
+			            }
+			        },
+			
+			        // load in the vertex and fragment shader by grabbing their element IDs
+			        vertexShader: document.getElementById( 'vertexShader' ).textContent,
+			        fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+			    } );
+
+    		    // bind the material ( shader ) to the geometry
+			    donut = new THREE.Mesh(geometry, material);
+
+			    scene.add(donut);
+
+
+		
+
+
+
+
+
+
+
+			//Events------------------------------------------
+			document.addEventListener( 'click', onMouseClick, false );
+			document.addEventListener( 'mousedown', onMouseDown, false );
+			document.addEventListener( 'mouseup', onMouseUp, false );
+			document.addEventListener( 'mousemove', onMouseMove, false );
+			document.addEventListener( 'mouseout', onMouseOut, false );
+			document.addEventListener( 'keydown', onKeyDown, false );
+			document.addEventListener( 'keyup', onKeyUp, false );
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			//Final touches-----------------------------------
+			container.appendChild( renderer.domElement );
+			document.body.appendChild( container );
+		}
+
+		function animate(){
+			requestAnimationFrame( animate );
+			render();
+		}
+		function render(){
+			// update shader uniforms
+			/*
+			material.uniforms[ 'time' ].value = .00025 * ( Date.now() - start );
+			*/
+			var timer = Date.now() * 0.0001;
+
+			donut.rotation.x = timer * 5;
+		
+			// update the videoTexture with the incoming data from the webcam
+			if ( video.readyState === video.HAVE_ENOUGH_DATA ) 
+			{
+				videoImageContext.drawImage( video, 0, 0, videoImage.width, videoImage.height );
+				if ( videoTexture ) 
+					videoTexture.needsUpdate = true;
+			}
+		
+			//Render Scene---------------------------------------
+        	renderer.clear({ color: 0x000000 });
+			renderer.render( scene , camera );
+		}
+
+
+		
+		function onMouseClick( event ){
+			intersects = calculateIntersects( event );
+
+			if ( intersects.length > 0 ){
+				//If object is intersected by mouse pointer, do something
+			}
+		}
+		function onMouseDown( event ){
+
+		}
+		function onMouseUp( event ){
+
+		}
+		function onMouseMove( event ){
+			//event.clientX; mouse x position
+			//event.clientY; mouse y position
+		}
+		function onMouseOut( event ){
+
+		}
+		function onKeyDown( event ){
+
+		}
+		function onKeyUp( event ){
+			/*event.keyCode; key pressed
+			Javascript keycode table:
+			http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
+			*/
+		}
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+		}
+		function calculateIntersects( event ){
+			
+			//Determine objects intersected by raycaster
+			event.preventDefault();
+
+			var vector = new THREE.Vector3();
+			vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+			vector.unproject( camera );
+
+			raycaster.ray.set( camera.position, vector.sub( camera.position ).normalize() );
+
+			var intersects = raycaster.intersectObjects( objects );
+			
+			return intersects;
+		}
+	</script>
+</html>
